@@ -10,8 +10,9 @@ description= "A simple tool for converting Traditional Chinese(TW) to Simple Chi
 readme = "README.md"
 license = "MIT"
 
-[badges]
-travis-ci = { repository = "magiclen/tw2s", branch = "master" }
+[badges.travis-ci]
+repository = "magiclen/tw2s"
+branch = "master"
 
 [profile.release]
 panic = "abort"
