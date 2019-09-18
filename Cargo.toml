@@ -1,7 +1,8 @@
 [package]
 name = "tw2s"
-version = "1.0.2"
+version = "1.0.3"
 authors = ["Magic Len <len@magiclen.org>"]
+edition = "2018"
 repository = "https://github.com/magiclen/tw2s"
 homepage = "https://magiclen.org/tw2s"
 keywords = ["chinese", "traditional", "simple", "conversion"]

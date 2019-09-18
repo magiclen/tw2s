@@ -8,9 +8,9 @@ extern crate path_absolutize;
 use path_absolutize::*;
 
 use std::env;
-use std::path::Path;
-use std::io::{self, Write, BufReader, BufRead};
 use std::fs::{self, File};
+use std::io::{self, BufRead, BufReader, Write};
+use std::path::Path;
 
 use clap::{App, Arg};
 
@@ -110,7 +110,10 @@ pub fn run(config: Config) -> Result<i32, String> {
                     if s_path.exists() {
                         if config.force {
                             if !s_path.is_file() {
-                                return Err(format!("`{}` is not a file!", s_path.to_str().unwrap()));
+                                return Err(format!(
+                                    "`{}` is not a file!",
+                                    s_path.to_str().unwrap()
+                                ));
                             }
                         } else {
                             return Err(format!("`{}` exists!", s_path.to_str().unwrap()));
@@ -132,25 +135,29 @@ pub fn run(config: Config) -> Result<i32, String> {
                                 file_stem
                             }
                         }
-                        None => ""
+                        None => "",
                     };
 
                     let file_stem = opencc.convert(&file_stem);
 
                     let file_name = match tw_path.extension() {
-                        Some(extension) => format!("{}.chs.{}", file_stem, extension.to_str().unwrap()),
-                        None => format!("{}.chs", file_stem)
+                        Some(extension) => {
+                            format!("{}.chs.{}", file_stem, extension.to_str().unwrap())
+                        }
+                        None => format!("{}.chs", file_stem),
                     };
 
                     Path::join(parent, file_name)
                 }
             };
 
-            let tw_file = File::open(&tw_path).map_err(|_| format!("Cannot open {}.", tw_path.to_str().unwrap()))?;
+            let tw_file = File::open(&tw_path)
+                .map_err(|_| format!("Cannot open {}.", tw_path.to_str().unwrap()))?;
 
             let mut tw_file = BufReader::new(tw_file);
 
-            let mut s_file = File::create(&s_path).map_err(|_| format!("Cannot create {}.", s_path.to_str().unwrap()))?;
+            let mut s_file = File::create(&s_path)
+                .map_err(|_| format!("Cannot create {}.", s_path.to_str().unwrap()))?;
 
             let mut line = String::new();
 
@@ -192,5 +199,5 @@ pub fn run(config: Config) -> Result<i32, String> {
 }
 
 fn try_delete<P: AsRef<Path>>(path: P) {
-    if let Err(_) = fs::remove_file(path.as_ref()) {}
+    if fs::remove_file(path.as_ref()).is_err() {}
 }
