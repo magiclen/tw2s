@@ -73,32 +73,20 @@ fn main() -> Result<(), String> {
         Some(tw_path) => {
             let tw_path = Path::new(tw_path).absolutize().map_err(|err| err.to_string())?;
 
-            if !tw_path.exists() {
-                return Err(format!("`{}` does not exist!", tw_path.to_string_lossy()));
-            }
+            let tw_file = File::open(&tw_path)
+                .map_err(|_| format!("Cannot open {}.", tw_path.to_string_lossy()))?;
 
-            if !tw_path.is_file() {
-                return Err(format!("`{}` is not a file!", tw_path.to_string_lossy()));
-            }
-
-            let s_path = match s_path {
+            let (s_path, mut s_file) = match s_path {
                 Some(s_path) => {
                     let s_path = Path::new(s_path).absolutize().map_err(|err| err.to_string())?;
 
-                    if s_path.exists() {
-                        if force {
-                            if !s_path.is_file() {
-                                return Err(format!(
-                                    "`{}` is not a file!",
-                                    s_path.to_string_lossy()
-                                ));
-                            }
-                        } else {
-                            return Err(format!("`{}` exists!", s_path.to_string_lossy()));
-                        }
+                    if s_path.exists() && !force {
+                        return Err(format!("`{}` exists!", s_path.to_string_lossy()));
                     }
 
-                    s_path
+                    let s_file = File::create(s_path.as_path()).map_err(|err| err.to_string())?;
+
+                    (s_path, s_file)
                 }
                 None => {
                     let parent = tw_path.parent().unwrap();
@@ -127,17 +115,15 @@ fn main() -> Result<(), String> {
                         None => format!("{}.chs", file_stem),
                     };
 
-                    Path::join(parent, file_name)
+                    let s_path = Path::join(parent, file_name);
+
+                    let s_file = File::create(s_path.as_path()).map_err(|err| err.to_string())?;
+
+                    (s_path, s_file)
                 }
             };
 
-            let tw_file = File::open(&tw_path)
-                .map_err(|_| format!("Cannot open {}.", tw_path.to_string_lossy()))?;
-
             let mut tw_file = BufReader::new(tw_file);
-
-            let mut s_file = File::create(&s_path)
-                .map_err(|_| format!("Cannot create {}.", s_path.to_string_lossy()))?;
 
             let mut line = String::new();
 
