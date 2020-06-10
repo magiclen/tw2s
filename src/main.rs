@@ -109,7 +109,7 @@ fn main() -> Result<(), String> {
                                 .to_str()
                                 .ok_or_else(|| String::from("Unsupported path."))?;
 
-                            if file_stem.ends_with(".chs") {
+                            if file_stem.ends_with(".cht") {
                                 &file_stem[..file_stem.len() - 4]
                             } else {
                                 file_stem
