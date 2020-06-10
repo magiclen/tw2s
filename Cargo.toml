@@ -1,6 +1,6 @@
 [package]
 name = "tw2s"
-version = "1.0.4"
+version = "1.0.5"
 authors = ["Magic Len <len@magiclen.org>"]
 edition = "2018"
 repository = "https://github.com/magiclen/tw2s"

@@ -23,7 +23,7 @@ use path_absolutize::Absolutize;
 
 use tw2s::*;
 
-const APP_NAME: &str = "Favicon Generator";
+const APP_NAME: &str = "tw2s";
 const CARGO_PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
 const CARGO_PKG_AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 
