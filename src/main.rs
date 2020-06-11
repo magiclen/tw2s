@@ -9,8 +9,8 @@ extern crate path_absolutize;
 
 extern crate tw2s;
 
-use std::env;
 use std::borrow::Cow;
+use std::env;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, Write};
 use std::path::Path;
@@ -81,8 +81,7 @@ fn main() -> Result<(), String> {
                 ));
             }
 
-            let tw_file = File::open(&tw_path)
-                .map_err(|err| err.to_string())?;
+            let tw_file = File::open(&tw_path).map_err(|err| err.to_string())?;
 
             let s_path = match s_path {
                 Some(s_path) => Cow::from(Path::new(s_path)),
@@ -119,8 +118,13 @@ fn main() -> Result<(), String> {
                 }
             };
 
-            if s_path.exists() && (s_path.is_dir() || !force) {
-                return Err(format!("`{}` exists!", s_path.absolutize().map_err(|err| err.to_string())?.to_string_lossy()));
+            if let Ok(metadata) = s_path.metadata() {
+                if metadata.is_dir() || !force {
+                    return Err(format!(
+                        "`{}` exists!",
+                        s_path.absolutize().map_err(|err| err.to_string())?.to_string_lossy()
+                    ));
+                }
             }
 
             let mut s_file = File::create(s_path.as_ref()).map_err(|err| err.to_string())?;
