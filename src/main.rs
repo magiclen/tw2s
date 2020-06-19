@@ -11,6 +11,7 @@ extern crate tw2s;
 
 use std::borrow::Cow;
 use std::env;
+use std::error::Error;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, Write};
 use std::path::Path;
@@ -28,7 +29,7 @@ const APP_NAME: &str = "tw2s";
 const CARGO_PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
 const CARGO_PKG_AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 
-fn main() -> Result<(), String> {
+fn main() -> Result<(), Box<dyn Error>> {
     let matches = App::new(APP_NAME)
         .set_term_width(terminal_size().map(|(width, _)| width.0 as usize).unwrap_or(0))
         .version(CARGO_PKG_VERSION)
@@ -63,8 +64,7 @@ fn main() -> Result<(), String> {
 
     let temporary_path = env::temp_dir();
 
-    generate_static_dictionary(&temporary_path, DefaultConfig::TW2SP)
-        .map_err(|err| err.to_string())?;
+    generate_static_dictionary(&temporary_path, DefaultConfig::TW2SP)?;
 
     let opencc = OpenCC::new(Path::join(&temporary_path, DefaultConfig::TW2SP))
         .map_err(|err| err.to_string())?;
@@ -77,11 +77,12 @@ fn main() -> Result<(), String> {
             if tw_path.is_dir() {
                 return Err(format!(
                     "`{}` is a directory!",
-                    tw_path.absolutize().map_err(|err| err.to_string())?.to_string_lossy()
-                ));
+                    tw_path.absolutize()?.to_string_lossy()
+                )
+                .into());
             }
 
-            let tw_file = File::open(&tw_path).map_err(|err| err.to_string())?;
+            let tw_file = File::open(&tw_path)?;
 
             let s_path = match s_path {
                 Some(s_path) => Cow::from(Path::new(s_path)),
@@ -120,14 +121,13 @@ fn main() -> Result<(), String> {
 
             if let Ok(metadata) = s_path.metadata() {
                 if metadata.is_dir() || !force {
-                    return Err(format!(
-                        "`{}` exists!",
-                        s_path.absolutize().map_err(|err| err.to_string())?.to_string_lossy()
-                    ));
+                    return Err(
+                        format!("`{}` exists!", s_path.absolutize()?.to_string_lossy()).into()
+                    );
                 }
             }
 
-            let mut s_file = File::create(s_path.as_ref()).map_err(|err| err.to_string())?;
+            let mut s_file = File::create(s_path.as_ref())?;
 
             let mut tw_file = BufReader::new(tw_file);
 
@@ -138,7 +138,7 @@ fn main() -> Result<(), String> {
 
                 let c = tw_file.read_line(&mut line).map_err(|err| {
                     try_delete(&s_path);
-                    err.to_string()
+                    err
                 })?;
 
                 if c == 0 {
@@ -147,7 +147,7 @@ fn main() -> Result<(), String> {
 
                 s_file.write(&opencc.convert(&line[0..c]).into_bytes()).map_err(|err| {
                     try_delete(&s_path);
-                    err.to_string()
+                    err
                 })?;
             }
         }
@@ -156,7 +156,7 @@ fn main() -> Result<(), String> {
             loop {
                 line.clear();
 
-                let c = io::stdin().read_line(&mut line).map_err(|err| err.to_string())?;
+                let c = io::stdin().read_line(&mut line)?;
 
                 if c == 0 {
                     break;
