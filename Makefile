@@ -10,7 +10,7 @@ all: ./target/release/tw2s
 install:
 	$(MAKE)
 	sudo cp ./target/release/tw2s /usr/local/bin/tw2s
-	sudo chown root. /usr/local/bin/tw2s
+	sudo chown root: /usr/local/bin/tw2s
 	sudo chmod 0755 /usr/local/bin/tw2s
 	
 test:
