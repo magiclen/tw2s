@@ -1,6 +1,6 @@
 [package]
 name = "tw2s"
-version = "1.0.13"
+version = "1.0.14"
 authors = ["Magic Len <len@magiclen.org>"]
 edition = "2018"
 repository = "https://github.com/magiclen/tw2s"
@@ -11,10 +11,6 @@ description = "A simple tool for converting Traditional Chinese(TW) to Simple Ch
 readme = "README.md"
 license = "MIT"
 include = ["src/**/*", "Cargo.toml", "README.md", "LICENSE"]
-
-[badges.travis-ci]
-repository = "magiclen/tw2s"
-branch = "master"
 
 [profile.release]
 lto = true

@@ -1,7 +1,7 @@
 tw2s
 ====================
 
-[![Build Status](https://travis-ci.org/magiclen/tw2s.svg?branch=master)](https://travis-ci.org/magiclen/tw2s)
+[![CI](https://github.com/magiclen/tw2s/actions/workflows/ci.yml/badge.svg)](https://github.com/magiclen/tw2s/actions/workflows/ci.yml)
 
 A simple tool for converting Traditional Chinese(TW) to Simple Chinese.
 
