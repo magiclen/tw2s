@@ -73,7 +73,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .into());
             }
 
-            let tw_file = File::open(&tw_path)?;
+            let tw_file = File::open(tw_path)?;
 
             let s_path = match s_path {
                 Some(s_path) => Cow::from(Path::new(s_path)),
@@ -91,7 +91,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                         None => "",
                     };
 
-                    let file_stem = opencc.convert(&file_stem);
+                    let file_stem = opencc.convert(file_stem);
 
                     let file_name = match tw_path.extension() {
                         Some(extension) => {
