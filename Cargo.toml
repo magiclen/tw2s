@@ -9,7 +9,6 @@ homepage = "https://magiclen.org/tw2s"
 keywords = ["chinese", "traditional", "simple", "conversion"]
 categories = ["command-line-utilities"]
 description = "A simple tool for converting Traditional Chinese(TW) to Simple Chinese."
-readme = "README.md"
 license = "MIT"
 include = ["src/**/*", "Cargo.toml", "README.md", "LICENSE"]
 
