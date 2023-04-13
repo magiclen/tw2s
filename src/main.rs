@@ -1,19 +1,17 @@
-use std::borrow::Cow;
-use std::env;
-use std::error::Error;
-use std::fs::File;
-use std::io::{self, BufRead, BufReader, Write};
-use std::path::Path;
+use std::{
+    borrow::Cow,
+    env,
+    error::Error,
+    fs::File,
+    io::{self, BufRead, BufReader, Write},
+    path::Path,
+};
 
 use clap::{Arg, Command};
-use terminal_size::terminal_size;
-
 use concat_with::concat_line;
-
 use opencc_rust::{generate_static_dictionary, DefaultConfig, OpenCC};
-
 use path_absolutize::Absolutize;
-
+use terminal_size::terminal_size;
 use tw2s::*;
 
 const APP_NAME: &str = "tw2s";
@@ -87,7 +85,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                                 .ok_or_else(|| String::from("Unsupported path."))?;
 
                             file_stem.strip_suffix(".cht").unwrap_or(file_stem)
-                        }
+                        },
                         None => "",
                     };
 
@@ -96,14 +94,14 @@ fn main() -> Result<(), Box<dyn Error>> {
                     let file_name = match tw_path.extension() {
                         Some(extension) => {
                             format!("{}.chs.{}", file_stem, extension.to_string_lossy())
-                        }
+                        },
                         None => format!("{}.chs", file_stem),
                     };
 
                     let s_path = Path::join(parent, file_name);
 
                     Cow::from(s_path)
-                }
+                },
             };
 
             if let Ok(metadata) = s_path.metadata() {
@@ -137,7 +135,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                     err
                 })?;
             }
-        }
+        },
         None => {
             let mut line = String::new();
             loop {
@@ -151,7 +149,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
                 println!("{}", opencc.convert(&line[0..(c - 1)]));
             }
-        }
+        },
     }
 
     Ok(())

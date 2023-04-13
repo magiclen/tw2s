@@ -3,6 +3,7 @@ name = "tw2s"
 version = "1.0.17"
 authors = ["Magic Len <len@magiclen.org>"]
 edition = "2021"
+rust-version = "1.59"
 repository = "https://github.com/magiclen/tw2s"
 homepage = "https://magiclen.org/tw2s"
 keywords = ["chinese", "traditional", "simple", "conversion"]
@@ -16,6 +17,7 @@ include = ["src/**/*", "Cargo.toml", "README.md", "LICENSE"]
 lto = true
 codegen-units = 1
 panic = "abort"
+strip = true
 
 [dependencies]
 clap = "3.2.3"
