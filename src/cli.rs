@@ -38,6 +38,7 @@ pub struct CLIArgs {
     #[arg(help = "Assign the path of your Simple Chinese document. It should be a file path")]
     pub s_path: Option<PathBuf>,
 }
+
 pub fn get_args() -> CLIArgs {
     let args = CLIArgs::command();
 
