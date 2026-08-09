@@ -7,9 +7,9 @@ use std::{
     io::{BufRead, BufReader, Write},
 };
 
-use anyhow::{anyhow, Context};
+use anyhow::{Context, anyhow};
 use cli::*;
-use opencc_rust::{generate_static_dictionary, DefaultConfig, OpenCC};
+use opencc_rust::{DefaultConfig, OpenCC, generate_static_dictionary};
 
 fn main() -> anyhow::Result<()> {
     let args = get_args();
@@ -19,7 +19,7 @@ fn main() -> anyhow::Result<()> {
     generate_static_dictionary(&temporary_path, DefaultConfig::TW2SP).unwrap();
 
     let opencc = OpenCC::new(temporary_path.join(DefaultConfig::TW2SP)).unwrap();
-    debug_assert_eq!("测试字符串", opencc.convert("測試字串"));
+    debug_assert_eq!(Ok("测试字符串"), opencc.convert("測試字串").as_ref().map(|s| s.as_str()));
 
     match args.tw_path {
         Some(tw_path) => {
@@ -45,7 +45,7 @@ fn main() -> anyhow::Result<()> {
                         None => "",
                     };
 
-                    let file_stem = opencc.convert(file_stem);
+                    let file_stem = opencc.convert(file_stem)?;
 
                     let file_name = match tw_path.extension() {
                         Some(extension) => {
@@ -84,10 +84,8 @@ fn main() -> anyhow::Result<()> {
 
                 let c = tw_file
                     .read_line(&mut line)
-                    .map_err(|error| {
+                    .inspect_err(|_| {
                         let _ = fs::remove_file(s_path.as_path());
-
-                        error
                     })
                     .with_context(|| anyhow!("{tw_path:?}"))?;
 
@@ -95,10 +93,8 @@ fn main() -> anyhow::Result<()> {
                     break;
                 }
 
-                s_file.write(&opencc.convert(&line[0..c]).into_bytes()).map_err(|error| {
+                s_file.write(&opencc.convert(&line[0..c])?.into_bytes()).inspect_err(|_| {
                     let _ = fs::remove_file(s_path.as_path());
-
-                    error
                 })?;
             }
         },
@@ -114,7 +110,7 @@ fn main() -> anyhow::Result<()> {
                     break;
                 }
 
-                println!("{}", opencc.convert(&line[0..(c - 1)]));
+                println!("{}", opencc.convert(&line[0..(c - 1)])?);
             }
         },
     }
